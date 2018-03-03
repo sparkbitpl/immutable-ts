@@ -1,0 +1,36 @@
+{
+  "name": "immutable-ts",
+  "version": "1.0.0",
+  "description": "Immutable objects for TypeScript",
+  "main": "./lib/immutable-ts.js",
+  "types": "./dts/immutable-ts.d.ts",
+  "scripts": {
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sparkbitpl/immutable-ts.git"
+  },
+  "keywords": [
+    "Immutable",
+    "TypeScript"
+  ],
+  "author": "Sparkbit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sparkbitpl/immutable-ts/issues"
+  },
+  "homepage": "https://github.com/sparkbitpl/immutable-ts#readme",
+  "devDependencies": {
+    "del": "3.0.0",
+    "gulp": "3.9.1",
+    "gulp-if": "2.0.2",
+    "gulp-sourcemaps": "2.6.4",
+    "gulp-typescript": "3.2.4",
+    "jasmine": "^2.9.0",
+    "jasmine-ts": "^0.2.1",
+    "path": "0.12.7",
+    "run-sequence": "2.2.1",
+    "yargs": "11.0.0"
+  }
+}
