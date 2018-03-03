@@ -34,6 +34,24 @@ export class ImmutableUtils {
         return copy;
     }
 
+    public static unshift<T>(arr: Array<T>, ...elements: T[]): Immutable<Array<T>> {
+        const copy = [...arr];
+        copy.unshift(...elements);
+        return copy;
+    }
+
+    public static setIndex<T>(arr: Array<T>, index: number, value: T): Immutable<Array<T>> {
+        const copy = [...arr];
+        copy[index] = value;
+        return copy;
+    }
+
+    public static removeElements<T>(arr: Array<T>, index: number, toRemove: number): Immutable<Array<T>> {
+        const copy = [...arr];
+        copy.splice(index, toRemove);
+        return copy;
+    }
+
     public static asImmutable<T>(obj: T): Immutable<T> {
         const copy = new (obj.constructor as { new (): Immutable<T> })();
         (<any>Object).assign(copy, obj);
