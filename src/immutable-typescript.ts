@@ -2,6 +2,7 @@ export type Immutable<T> = {
     readonly [P in keyof T]: Immutable<T[P]>;
 }
 
+export interface ImmutableArray<T> extends Array<T> {}
 
 export class ImmutableUtils {
     public static setValue<T,K extends keyof T>(obj: Immutable<T>, key: K, val: T[K]): Immutable<T> {
@@ -34,20 +35,20 @@ export class ImmutableUtils {
         return copy;
     }
 
-    public static unshift<T>(arr: Array<T>, ...elements: T[]): Immutable<Array<T>> {
-        const copy = [...arr];
+    public static unshift<T>(arr: Immutable<Array<T>>, ...elements: T[]): Immutable<Array<T>> {
+        const copy = [...(arr as Array<T>)];
         copy.unshift(...elements);
         return copy;
     }
 
-    public static setIndex<T>(arr: Array<T>, index: number, value: T): Immutable<Array<T>> {
-        const copy = [...arr];
+    public static setIndex<T>(arr: Immutable<Array<T>>, index: number, value: T): Immutable<Array<T>> {
+        const copy = [...(arr as Array<T>)];
         copy[index] = value;
         return copy;
     }
 
-    public static removeElements<T>(arr: Array<T>, index: number, toRemove: number): Immutable<Array<T>> {
-        const copy = [...arr];
+    public static removeElements<T>(arr: Immutable<Array<T>>, index: number, toRemove: number): Immutable<Array<T>> {
+        const copy = [...(arr as Array<T>)];
         copy.splice(index, toRemove);
         return copy;
     }
@@ -58,3 +59,4 @@ export class ImmutableUtils {
         return copy;
     }
 }
+
