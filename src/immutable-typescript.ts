@@ -35,19 +35,19 @@ export class ImmutableUtils {
         return copy;
     }
 
-    public static unshift<T>(arr: Immutable<Array<T>>, ...elements: (T | Immutable<T>)[]): Immutable<Array<T>> {
+    public static unshift<T>(arr: ReadonlyArray<T>, ...elements: (T | Immutable<T>)[]): ReadonlyArray<T> {
         const copy = [...(arr as Array<any>)];
         copy.unshift(...elements);
         return copy;
     }
 
-    public static setIndex<T>(arr: Immutable<Array<T>>, index: number, value: T | Immutable<T>): Immutable<Array<T>> {
+    public static setIndex<T>(arr: ReadonlyArray<T>, index: number, value: T | Immutable<T>): ReadonlyArray<T> {
         const copy = [...(arr as Array<any>)];
         copy[index] = value;
         return copy;
     }
 
-    public static removeElements<T>(arr: Immutable<Array<T>>, index: number, toRemove: number): Immutable<Array<T>> {
+    public static removeElements<T>(arr: ReadonlyArray<T>, index: number, toRemove: number): ReadonlyArray<T> {
         const copy = [...(arr as Array<T>)];
         copy.splice(index, toRemove);
         return copy;
