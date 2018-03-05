@@ -31,6 +31,7 @@
     "jasmine-ts": "^0.2.1",
     "path": "0.12.7",
     "run-sequence": "2.2.1",
+    "typescript": "^2.8.0-dev.20180302",
     "yargs": "11.0.0"
   }
 }
