@@ -1,7 +1,7 @@
 # immutable-typescript
 `Immutable-typescript` is a library that provides immutable objects in TypeScript.
 An instance of standard TypeScript POJO-like class, such as
-```typeScript
+```typescript
 export class Book {
     constructor(public title: string, public publicationYear: number) {}
 }
@@ -13,7 +13,7 @@ export class Author {
 }
 ```
 can be converted to immutable using `immutable-typescript` in the following way:
-```typeScript
+```typescript
 import {Immutable, ImmutableUtils} from "immutable-typescript";
 const book1 = new Book("Journey to the Center of the Earth", 1864);
 const book2 = new Book("The Mysterious Island", 1875);
@@ -33,7 +33,7 @@ immutableInstance.books.push(new Book(...)); // compilation error
 
 `Immutable-typescript` provides operators to set properties of immutable objects. These operators create a copy of the original object,
 with the updated value of the modified property:
-```typeScript
+```typescript
 // creates a new instance with an updated name property
 const updatedInstance = ImmutableUtils.setValue(immutableInstance, "name", "Foo");
 
@@ -46,7 +46,7 @@ ImmutableUtils.setValue(immutableInstance, "nonexistingProperty", "Boom!");
 ```
 As you can see, the setter operators are type safe: they statically check both the property name and the type.
 It is also possible to update a nested value, e.g.:
-```typeScript
+```typescript
 const updatedInstance: Immutable<Author> = ImmutableUtils.setValue2(immutableInstance, "country", "isoCode", "DE");
 ```
 Also in this case, all the property names are statically validated.
