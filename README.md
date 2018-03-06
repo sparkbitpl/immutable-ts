@@ -56,6 +56,9 @@ As you can see, the setter operators are type safe: they statically check both t
 It is also possible to update a nested value, e.g.:
 ```typescript
 const updated: Immutable<Author>
-        = ImmutableUtils.setValue2(immutable, "country", "isoCode", "DE");
+        = ImmutableUtils.setValue2(immutable,
+                                    "countryOfOrigin",
+                                    "isoCode",
+                                    "DE");
 ```
 Also in this case, all the property names are statically validated.
