@@ -1,49 +1,33 @@
-type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]>> : Immutable<T>;
+export type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]>> : Immutable<T>;
 
 export type Immutable<T> = {
     readonly [P in keyof T]: ImmutableWrapper<T[P]>;
 }
 
+export type PropOrIndex<T> = T extends any[] ? number : keyof T;
+
+export class Proxy<T, P, R> {
+
+    constructor(private proxied: Immutable<T>, private parentProxy: Proxy<P, any, R>, private prop: any) {}
+    public at<K extends PropOrIndex<T>>(prop: K): Proxy<T[K & keyof T], T, R> {
+        return new Proxy(<any>this.proxied[<any>prop], this, prop);
+    }
+    public set<K extends PropOrIndex<T>>(prop: K, val: T[K & keyof T]): Immutable<R> {
+        const copy = new (this.proxied.constructor as { new (): Immutable<T> })();
+        (<any>Object).assign(copy, this.proxied);
+        (<any>copy)[prop] = val;
+
+        if (this.parentProxy == null) {
+            return <any>copy;
+        }
+        return this.parentProxy.set(this.prop, <any>copy);
+    }
+}
+
 export class ImmutableUtils {
-    public static setValue<T,K extends keyof T>(obj: Immutable<T>, key: K, val: T[K] | Immutable<T[K]>): Immutable<T> {
-        const copy = new (obj.constructor as { new (): Immutable<T> })();
-        (<any>Object).assign(copy, obj);
-        (<any>copy)[key] = val;
-        return copy;
-    }
-
-    public static setValue2<T,K extends keyof T, K2 extends keyof T[K]>(obj: Immutable<T>, key: K, key2: K2, val: T[K][K2] | Immutable<T[K][K2]>): Immutable<T> {
-        const copy = new (obj.constructor as { new (): Immutable<T> })();
-        (<any>Object).assign(copy, obj);
-        (<any>copy)[key] = ImmutableUtils.setValue(<any>obj[key], key2, val);
-        return copy;
-    }
-
-    public static setValue3<T,K extends keyof T, K2 extends keyof T[K], K3 extends keyof T[K][K2]>
-            (obj: Immutable<T>, key: K, key2: K2, key3:K3, val: T[K][K2][K3] | Immutable<T[K][K2][K3]>): Immutable<T> {
-        const copy = new (obj.constructor as { new (): Immutable<T> })();
-        (<any>Object).assign(copy, obj);
-        (<any>copy)[key] = ImmutableUtils.setValue2(<any>obj[key], key2, key3, val);
-        return copy;
-    }
-
-    public static setValue4<T,K extends keyof T, K2 extends keyof T[K], K3 extends keyof T[K][K2], K4 extends keyof T[K][K2][K3]>
-            (obj: Immutable<T>, key: K, key2: K2, key3: K3, key4: K4, val: T[K][K2][K3][K4] | Immutable<T[K][K2][K3][K4]>): Immutable<T> {
-        const copy = new (obj.constructor as { new (): Immutable<T> })();
-        (<any>Object).assign(copy, obj);
-        (<any>copy)[key] = ImmutableUtils.setValue3(<any>obj[key], key2, key3, key4, val);
-        return copy;
-    }
-
     public static unshift<T>(arr: ReadonlyArray<T>, ...elements: (T | Immutable<T>)[]): ReadonlyArray<T> {
         const copy = [...(arr as Array<any>)];
         copy.unshift(...elements);
-        return copy;
-    }
-
-    public static setIndex<T>(arr: ReadonlyArray<T>, index: number, value: T | Immutable<T>): ReadonlyArray<T> {
-        const copy = [...(arr as Array<any>)];
-        copy[index] = value;
         return copy;
     }
 
@@ -58,6 +42,8 @@ export class ImmutableUtils {
         (<any>Object).assign(copy, obj);
         return copy;
     }
+
+    public static update<T>(obj: Immutable<T>): Proxy<T, never, T> {
+        return new Proxy(obj, null, null);
+    }
 }
-
-

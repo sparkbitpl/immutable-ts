@@ -6,14 +6,10 @@ export class Book {
     constructor(public title: string,
                 public publicationYear: number) {}
 }
-export class Country {
-    constructor(public name: string,
-                public isoCode: string) {}
-}
+
 export class Author {
     constructor(public name: string,
-                public books: Book[],
-                public countryOfOrigin: Country) {}
+                public books: Book[]) {}
 }
 ```
 can be converted to immutable using `immutable-typescript` in the following way:
@@ -22,7 +18,7 @@ import {Immutable, ImmutableUtils} from "immutable-typescript";
 const book1 = new Book("Journey to the Center of the Earth", 1864);
 const book2 = new Book("The Mysterious Island", 1875);
 const mutableInstance
-        = new Author("Jules Verne", [book1, book2], new Country("France", "FR"));
+        = new Author("Jules Verne", [book1, book2]);
 
 // convert to immutable
 const immutable: Immutable<Author>
@@ -43,22 +39,22 @@ immutable.books.push(new Book(...)); // compilation error
 with the updated value of the modified property:
 ```typescript
 // creates a new instance with an updated name property
-const updated = ImmutableUtils.setValue(immutable, "name", "Foo");
+const updated = ImmutableUtils.update(immutable).set("name", "Foo");
 
 // fails to compile, as name in type Author is not of type number:
-const updated = ImmutableUtils.setValue(immutable, "name", 42);
+ImmutableUtils.update(immutable).set("name", 42);
 
 // fails to compile, as nonexistentProperty does not exist in type Author:
-ImmutableUtils.setValue(immutable, "nonexistingProperty", "Boom!");
+ImmutableUtils.update(immutable).set("nonexistingProperty", "Boom!");
 
 ```
 As you can see, the setter operators are type safe: they statically check both the property name and the type.
 It is also possible to update a nested value, e.g.:
 ```typescript
 const updated: Immutable<Author>
-        = ImmutableUtils.setValue2(immutable,
-                                    "countryOfOrigin",
-                                    "isoCode",
-                                    "DE");
+        = ImmutableUtils.update(immutable)
+                        .at("books")
+                        .at(0)
+                        .set("publicationYear", 2018);
 ```
 Also in this case, all the property names are statically validated.
