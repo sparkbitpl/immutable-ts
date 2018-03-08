@@ -1,6 +1,6 @@
 {
   "name": "immutable-typescript",
-  "version": "1.0.10",
+  "version": "1.1.1",
   "description": "Immutable objects for TypeScript",
   "main": "./lib/immutable-typescript.js",
   "types": "./dts/immutable-typescript.d.ts",
