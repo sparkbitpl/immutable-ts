@@ -2,41 +2,52 @@ export type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]
 
 export type Immutable<T> = {
     readonly [P in keyof T]: ImmutableWrapper<T[P]>;
+
 }
 
 export type PropOrIndex<T> = T extends any[] ? number : keyof T;
 
+export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> : Proxy<T, P, R>;
+
 export class Proxy<T, P, R> {
 
-    constructor(private proxied: Immutable<T>, private parentProxy: Proxy<P, any, R>, private prop: any) {}
-    public at<K extends PropOrIndex<T>>(prop: K): Proxy<T[K & keyof T], T, R> {
-        return new Proxy(<any>this.proxied[<any>prop], this, prop);
+    constructor(protected proxied: Immutable<T>, protected parentProxy: Proxy<P, any, R>, protected prop: any) {}
+    public at<K extends PropOrIndex<T>>(prop: K): ProxyWrapper<T[K & keyof T], T, R> {
+        if (Array.isArray(this.proxied[<any>prop])) {
+            return <any> new ArrayProxy(<any>this.proxied[<any>prop], this, prop);
+        }
+        return <any> new Proxy(<any>this.proxied[<any>prop], this, prop);
     }
-    public set<K extends PropOrIndex<T>>(prop: K, val: T[K & keyof T]): Immutable<R> {
+    public set<K extends PropOrIndex<T>>(prop: K, val: ImmutableWrapper<T[K & keyof T]>): Immutable<R> {
         const copy = new (this.proxied.constructor as { new (): Immutable<T> })();
         (<any>Object).assign(copy, this.proxied);
         (<any>copy)[prop] = val;
+        return this.plugInObject(copy);
+    }
 
+    protected plugInObject(copy: any): Immutable<R> {
         if (this.parentProxy == null) {
-            return <any>copy;
+            return copy;
         }
-        return this.parentProxy.set(this.prop, <any>copy);
+        return this.parentProxy.set(this.prop, copy);
+    }
+}
+
+export class ArrayProxy<T, P, R> extends Proxy<T, P, R> {
+    public unshift(...elements: (T | Immutable<T>)[]): Immutable<R> {
+        const copy = [...(<any>this.proxied as Array<any>)];
+        copy.unshift(...elements);
+        return this.plugInObject(copy);
+    }
+
+    public remove(index: number, count: number): Immutable<R> {
+        const copy = [...(<any>this.proxied as Array<any>)];
+        copy.splice(index, count);
+        return this.plugInObject(copy);
     }
 }
 
 export class ImmutableUtils {
-    public static unshift<T>(arr: ReadonlyArray<T>, ...elements: (T | Immutable<T>)[]): ReadonlyArray<T> {
-        const copy = [...(arr as Array<any>)];
-        copy.unshift(...elements);
-        return copy;
-    }
-
-    public static removeElements<T>(arr: ReadonlyArray<T>, index: number, toRemove: number): ReadonlyArray<T> {
-        const copy = [...(arr as Array<T>)];
-        copy.splice(index, toRemove);
-        return copy;
-    }
-
     public static asImmutable<T>(obj: T): Immutable<T> {
         const copy = new (obj.constructor as { new (): Immutable<T> })();
         (<any>Object).assign(copy, obj);

@@ -33,5 +33,8 @@
     "run-sequence": "2.2.1",
     "typescript": "^2.8.0-dev.20180302",
     "yargs": "11.0.0"
+  },
+  "dependencies": {
+    "typescript": "^2.8.0-dev.20180308"
   }
 }
