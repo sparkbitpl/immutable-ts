@@ -7,7 +7,7 @@ export type Immutable<T> = {
 
 export type PropOrIndex<T> = T extends any[] ? number : keyof T;
 
-export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> : Proxy<T, P, R>;
+export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> : string extends keyof T ? DictProxy<T, P, R> : Proxy<T, P, R>;
 
 export class Proxy<T, P, R> {
 
@@ -44,6 +44,12 @@ export class ArrayProxy<T, P, R> extends Proxy<T, P, R> {
         const copy = [...(<any>this.proxied as Array<any>)];
         copy.splice(index, count);
         return this.plugInObject(copy);
+    }
+}
+
+export class DictProxy<T, P, R> extends Proxy<T, P, R> {
+    public del(): void {
+
     }
 }
 
