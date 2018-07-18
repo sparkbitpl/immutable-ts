@@ -1,4 +1,4 @@
-export type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]>> : T extends () => any ? () => ImmutableWrapper<ReturnType<T>>: Immutable<T>;
+export type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]>> : T extends () => {} ? () => ImmutableWrapper<ReturnType<T>>: Immutable<T>;
 
 export type Immutable<T> = {
     readonly [P in keyof T]: ImmutableWrapper<T[P]>;
