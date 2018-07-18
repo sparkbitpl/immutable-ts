@@ -58,3 +58,25 @@ const updated: Immutable<Author>
                         .set("publicationYear", 2018);
 ```
 Also in this case, all the property names are statically validated.
+
+`Immutable-typescript` exposes also parameterless functions from the underlying object in the `Immutable`:
+
+```typescript
+class Foo {
+        ...
+}
+
+class Bar {
+        ...
+        public getFoo(): Foo = {
+                ...
+        }
+}
+
+const bar: Bar = ...;
+const immBar: Immutable<Bar> = ImmutableUtils(bar);
+
+const result: Immutable<Foo> = immBar.getFoo();
+```
+
+Note - the library does not validate if the function is pure, so use this feature with extreme caution.
