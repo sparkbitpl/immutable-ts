@@ -7,7 +7,8 @@ export type Immutable<T> = {
 
 export type PropOrIndex<T> = T extends any[] ? number : keyof T;
 
-export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> : string extends keyof T ? DictProxy<T, P, R> : Proxy<T, P, R>;
+export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> :
+    string extends keyof T ? DictProxy<T, P, R> : T extends Map<any, any> ? MapProxy<T, P, R> : Proxy<T, P, R>;
 
 export class Proxy<T, P, R> {
 
@@ -50,6 +51,36 @@ export class ArrayProxy<T, P, R> extends Proxy<T, P, R> {
 export class DictProxy<T, P, R> extends Proxy<T, P, R> {
     public del(): void {
 
+    }
+}
+
+export class MapProxy<T extends Map<any, any>, P, R> extends Proxy<T, P, R>{
+    public clear(): Immutable<R> {
+        const copy = this.copyMap();
+        copy.clear();
+        return this.plugInObject(copy);
+    }
+
+    private copyMap(): Map<any, any> {
+        const copy = new (this.proxied.constructor as { new (): Immutable<T> })();
+        (<any>Object).assign(copy, this.proxied);
+        return <Map<any, any>>copy;
+    }
+
+    public set<K extends PropOrIndex<T>>(prop: K, val: ImmutableWrapper<T[K & keyof T]>): Immutable<R> {
+        const copy = this.copyMap();
+        copy.set(prop, val);
+        return this.plugInObject(copy);
+    }
+
+    public at<K extends PropOrIndex<T>>(prop: K): ProxyWrapper<T[K & keyof T], T, R> {
+        return <any>new Proxy((<Map<any, any>>this.proxied).get(prop), this, prop);
+    }
+
+    public delete<K extends PropOrIndex<T>>(prop: K): Immutable<R> {
+        const copy = this.copyMap();
+        copy.delete(prop);
+        return this.plugInObject(copy);
     }
 }
 
