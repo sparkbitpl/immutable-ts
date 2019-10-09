@@ -5,7 +5,7 @@ export type Immutable<T> = {
 
 }
 
-export type PropOrIndex<T> = T extends any[] ? number : keyof T;
+export type PropOrIndex<T> = T extends any[] ? number : T extends Map<any, any> ? any : keyof T;
 
 export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> :
     string extends keyof T ? DictProxy<T, P, R> : T extends Map<any, any> ? MapProxy<T, P, R> : Proxy<T, P, R>;
