@@ -23,7 +23,7 @@
   "homepage": "https://github.com/sparkbitpl/immutable-ts#readme",
   "devDependencies": {
     "del": "3.0.0",
-    "gulp": "3.9.1",
+    "gulp": "^4.0.0",
     "gulp-if": "2.0.2",
     "gulp-sourcemaps": "2.6.4",
     "gulp-typescript": "3.2.4",

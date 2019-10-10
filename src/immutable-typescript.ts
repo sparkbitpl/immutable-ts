@@ -2,10 +2,10 @@ export type ImmutableWrapper<T> = T extends any[] ? ReadonlyArray<Immutable<T[0]
 
 export type Immutable<T> = {
     readonly [P in keyof T]: ImmutableWrapper<T[P]>;
-
 }
 
-export type PropOrIndex<T> = T extends any[] ? number : T extends Map<any, any> ? any : keyof T;
+export type PropOrIndex<T> = T extends any[] ? number : T extends Map<string, any> ? string :
+    T extends Map<any, any> ? any : keyof T;
 
 export type ProxyWrapper<T, P, R> = T extends any[] ? ArrayProxy<T, P, R> :
     string extends keyof T ? DictProxy<T, P, R> : T extends Map<any, any> ? MapProxy<T, P, R> : Proxy<T, P, R>;

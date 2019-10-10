@@ -37,5 +37,6 @@ gulp.task("generate-dts", () => {
     return tsResult.dts.pipe(gulp.dest("dts"));
 });
 
-gulp.task("build", (cb) =>
-    runSequence("clean", "transpile-ts", "generate-dts", cb));
+gulp.task("build",
+    gulp.series("clean", "transpile-ts", "generate-dts", function (done) {
+        done();}));
